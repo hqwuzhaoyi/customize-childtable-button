@@ -6,7 +6,7 @@ import { Button } from 'antd';
 import Config from './Config';
 
 if (process.env.NODE_ENV !== 'production') {
-  require('antd/dist/antd.css');
+  require('antd/dist/antd.min.css');
 }
 
 if (process.env.NODE_ENV !== 'production') {
