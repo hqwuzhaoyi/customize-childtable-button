@@ -216,7 +216,7 @@ module.exports = function(webpackEnv) {
       // webpack uses `publicPath` to determine where the app is being served from.
       // It requires a trailing slash, or the file assets will get an incorrect path.
       // We inferred the "public path" (such as / or /my-project) from homepage.
-      publicPath: paths.publicUrlOrPath,
+      publicPath: isEnvDevelopment ? 'auto' : paths.publicUrlOrPath,
       // Point sourcemap entries to original disk location (format as URL on Windows)
       devtoolModuleFilenameTemplate: isEnvProduction
         ? info =>
@@ -279,10 +279,7 @@ module.exports = function(webpackEnv) {
       // Automatically split vendor and commons
       // https://twitter.com/wSokra/status/969633336732905474
       // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
-      // splitChunks: {
-      //   chunks: 'all',
-      //   name: isEnvDevelopment,
-      // },
+      splitChunks:false,
       // Keep the runtime chunk separated to enable long term caching
       // https://twitter.com/wSokra/status/969679223278505985
       // https://github.com/facebook/create-react-app/issues/5358
@@ -403,9 +400,9 @@ module.exports = function(webpackEnv) {
                       },
                     },
                   ],
-                  isEnvDevelopment &&
-                    shouldUseReactRefresh &&
-                    require.resolve('react-refresh/babel'),
+                  // isEnvDevelopment &&
+                  //   shouldUseReactRefresh &&
+                  //   require.resolve('react-refresh/babel'),
                 ].filter(Boolean),
                 // This is a feature of `babel-loader` for webpack (not Babel itself).
                 // It enables caching results in ./node_modules/.cache/babel-loader/
@@ -611,19 +608,19 @@ module.exports = function(webpackEnv) {
       isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
       // Experimental hot reloading for React .
       // https://github.com/facebook/react/tree/master/packages/react-refresh
-      isEnvDevelopment &&
-        shouldUseReactRefresh &&
-        new ReactRefreshWebpackPlugin({
-          overlay: {
-            entry: webpackDevClientEntry,
-            // The expected exports are slightly different from what the overlay exports,
-            // so an interop is included here to enable feedback on module-level errors.
-            module: reactRefreshOverlayEntry,
-            // Since we ship a custom dev client and overlay integration,
-            // the bundled socket handling logic can be eliminated.
-            sockIntegration: false,
-          },
-        }),
+      // isEnvDevelopment &&
+      //   shouldUseReactRefresh &&
+      //   new ReactRefreshWebpackPlugin({
+      //     overlay: {
+      //       entry: webpackDevClientEntry,
+      //       // The expected exports are slightly different from what the overlay exports,
+      //       // so an interop is included here to enable feedback on module-level errors.
+      //       module: reactRefreshOverlayEntry,
+      //       // Since we ship a custom dev client and overlay integration,
+      //       // the bundled socket handling logic can be eliminated.
+      //       sockIntegration: false,
+      //     },
+      //   }),
       // Watcher doesn't work well if you mistype casing in a path so we use
       // a plugin that prints an error when you attempt to do this.
       // See https://github.com/facebook/create-react-app/issues/240
@@ -718,31 +715,33 @@ module.exports = function(webpackEnv) {
           },
         }),
 
-      // !isEnvProduction &&
-      //   new ModuleFederationPlugin({
-      //     name: 'PLUGIN',
-      //     filename: 'remoteEntry.js',
-      //     remotes: {
-      //       PLUGIN: `PLUGIN@${PLUGIN_HOST}/remoteEntry.js`,
-      //     },
-      //     exposes: {
-      //       './Config': './src/Config',
-      //       './action': './src/action',
-      //     },
-      //     shared: {
-      //       ...dependencies,
-      //       react: {
-      //         eager: true,
-      //         singleton: true,
-      //         requiredVersion: dependencies['react'],
-      //       },
-      //       'react-dom': {
-      //         eager: true,
-      //         singleton: true,
-      //         requiredVersion: dependencies['react-dom'],
-      //       },
-      //     },
-      //   }),
+      !isEnvProduction &&
+        new ModuleFederationPlugin({
+          name: 'Remote',
+          filename: 'remoteEntry.js',
+          library: { type: 'var', name: 'Remote' },
+          // remotes: {
+          //   PLUGIN: `PLUGIN@${PLUGIN_HOST}/remoteEntry.js`,
+          // },
+          exposes: {
+            './Config': './src/Config',
+            './action': './src/action',
+            './appInjector': './src/appInjector',
+          },
+          // shared: {
+          //   // ...dependencies,
+          //   react: {
+          //     eager: true,
+          //     singleton: true,
+          //     requiredVersion: dependencies['react'],
+          //   },
+          //   'react-dom': {
+          //     eager: true,
+          //     singleton: true,
+          //     requiredVersion: dependencies['react-dom'],
+          //   },
+          // },
+        }),
     ].filter(Boolean),
     performance: false,
   };

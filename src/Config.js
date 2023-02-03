@@ -11,6 +11,9 @@ const Config = ({ configValue, changeConfigValue }) => {
   const changeHeight = e => {
     setState({ height: e.target.value });
   };
+  const changemoduleId = e => {
+    setState({ moduleId: e.target.value });
+  };
 
   useEffect(() => {
     changeConfigValue(state);
@@ -30,6 +33,12 @@ const Config = ({ configValue, changeConfigValue }) => {
         // rules={[{ required: true, message: 'Please input your username!' }]}
       >
         <Input onChange={changeHeight} defaultValue={state.height} />
+      </Form.Item>
+      <Form.Item
+        label="表单ID"
+        // rules={[{ required: true, message: 'Please input your username!' }]}
+      >
+        <Input onChange={changemoduleId} defaultValue={state.moduleId} />
       </Form.Item>
     </div>
   );
