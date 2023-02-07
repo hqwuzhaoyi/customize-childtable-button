@@ -7,7 +7,7 @@ export const inject = (dom, props) => {
   if (props.isConfig) {
     ReactDOM.render(<Config {...props} />, dom);
   } else {
-    action(props)
+    action(props);
     // const App = () => {
     //   return <div>qwe</div>
     // }

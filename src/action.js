@@ -1,35 +1,54 @@
+import { querySunDataId } from './api/asset';
+
 export default props => {
   console.log('11111appInjector props----', props);
 
   if (props.type === 'form') {
-    props.openFormModal({
-      openType: 'modal',
-      defaultValue: props.record?.additionalData?.[props.text],
-      onOk: data => {
-        console.log('data', data);
-        props.onChangeAdditionalData(data);
-      },
-      moduleId: props.configValue.moduleId,
-      dataId: undefined,
-      modalProps: {
-        visible: true,
-        width: 720,
-        height: 640,
-      },
-      isCopy: true,
+    querySunDataId({
+      formId: props.childTableProps.formCenterInstance.formId,
+      subTableCompId: props.childTableProps.id,
+      dataId: props.record[props.childTableProps.primaryKey],
+      type: 'form',
+    }).then(res => {
+      props.openFormModal({
+        openType: 'modal',
+        defaultValue: props.record?.additionalData?.[props.text],
+        onOk: data => {
+          console.log('data', data);
+          data.responseDetail = props.responseDetail;
+          data.operationType = !res.data ? 'insert' : 'edit';
+          props.onChangeAdditionalData(data);
+        },
+        moduleId: props.configValue.sunTableFormId,
+        dataId: res.data,
+        modalProps: {
+          visible: true,
+          width: props.configValue?.width ?? 720,
+          height: props.configValue?.height ?? 640,
+          title: props.configValue?.title ?? '表单',
+        },
+        isCopy: props.childTableProps.isCopy,
+      });
     });
   }
   if (props.type === 'detail') {
-    props.openFormModal({
-      openType: 'modal',
-      formId: '4917e03a-8423-4f86-a3c7-a2be90b09622',
-      dataId: '1fb4014f24a1485ab9a52820ed4294aa',
-      modalProps: {
-        visible: true,
-        width: 720,
-        height: 640,
-        title: '首页'
-      },
+    querySunDataId({
+      formId: props.btnInfo.modelId,
+      subTableCompId: props.childTableProps.id,
+      dataId: props.record[props.childTableProps.primaryKey],
+      type: 'detail',
+    }).then(res => {
+      props.openFormModal({
+        openType: 'modal',
+        formId: props.configValue.sunTableFormId,
+        dataId: res.data,
+        modalProps: {
+          visible: true,
+          width: props.configValue?.width + 'px' ?? 720,
+          height: props.configValue?.height + 'px' ?? 640,
+          title: props.configValue?.title ?? '表单',
+        },
+      });
     });
 
     // window.open(
