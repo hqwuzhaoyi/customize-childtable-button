@@ -26,7 +26,9 @@ const Config = ({
   subTableComponents,
   page,
 }) => {
-  const [state, setState] = useSetState(configValue ?? {});
+  const [state, setState] = useSetState(
+    configValue ?? { sunTableRelation: {} }
+  );
 
   const [childTableStructs, setChildTableStructs] = useState([]);
   const [subChildTableStructs, setSunChildTableStructs] = useState([]);
@@ -44,10 +46,14 @@ const Config = ({
     setState({ sunTableFormId: e.target.value });
   };
   const changeSubTableField = value => {
-    setState({ subTableField: value });
+    setState({
+      sunTableRelation: { subTableField: value, ...state.sunTableRelation },
+    });
   };
   const changeSunTableField = value => {
-    setState({ sunTableField: value });
+    setState({
+      sunTableRelation: { sunTableField: value, ...state.sunTableRelation },
+    });
   };
 
   const queryForm = async function() {
@@ -74,7 +80,7 @@ const Config = ({
   return (
     <div>
       <Form.Item
-        label="宽度"
+        label="弹窗名称"
         // rules={[{ required: true, message: 'Please input your username!' }]}
       >
         <Input onChange={changeTitle} defaultValue={state.title ?? '表单'} />
@@ -108,7 +114,7 @@ const Config = ({
           >
             <Select
               onChange={changeSubTableField}
-              defaultValue={state.subTableField}
+              defaultValue={state.sunTableRelation?.subTableField}
             >
               {createStructOption(childTableStructs)}
             </Select>
@@ -124,7 +130,7 @@ const Config = ({
           >
             <Select
               onChange={changeSunTableField}
-              defaultValue={state.sunTableField}
+              defaultValue={state.sunTableRelation?.sunTableField}
             >
               {createStructOption(subChildTableStructs)}
             </Select>

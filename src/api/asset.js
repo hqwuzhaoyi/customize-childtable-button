@@ -38,8 +38,12 @@ export const querySunDataId = async ({
   subTableCompId,
   dataId,
   type = 'form',
+  btnId,
 }) => {
-  const param = qs.stringify({ formId, subTableCompId, dataId, type }, true);
+  const param = qs.stringify(
+    { formId, subTableCompId, dataId, type, btnId },
+    true
+  );
   try {
     const result = await request.get(`bxyhyk/form/data/querySunDataId${param}`);
     return result;
@@ -72,6 +76,7 @@ export const queryDetailStruct = async id => {
 
 export const getStructNames = formComponents =>
   formComponents
+    .filter(comp => comp.componentPhysicalFieldMappingList)
     .map(comp =>
       comp.componentPhysicalFieldMappingList.map(item => item.structName)
     )

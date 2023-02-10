@@ -4,11 +4,23 @@ export default props => {
   console.log('11111appInjector props----', props);
 
   if (props.type === 'form') {
+    const dataIdKey = props?.childTableProps?.serverComponentConfig?.child_table_children?.find(
+      ele =>
+        ele?.componentPhysicalFieldMappingList?.find(
+          field =>
+            field.structName ===
+            props.configValue?.sunTableRelation?.subTableField
+        )
+    )?.id;
+
     querySunDataId({
       formId: props.childTableProps.formCenterInstance.formId,
       subTableCompId: props.childTableProps.id,
-      dataId: props.record[props.childTableProps.primaryKey],
+      dataId:
+        props.record[dataIdKey + '_childtable_' + props.index] ??
+        props.record[dataIdKey],
       type: 'form',
+      btnId: props.btnInfo.id,
     }).then(res => {
       props.openFormModal({
         openType: 'modal',
@@ -28,15 +40,25 @@ export default props => {
           title: props.configValue?.title ?? '表单',
         },
         isCopy: props.childTableProps.isCopy,
+        isModalOpen: true,
       });
     });
   }
   if (props.type === 'detail') {
+    const dataIdKey = props?.childTableProps?.childTable?.find(ele =>
+      ele?.componentPhysicalFieldMappingList?.find(
+        field =>
+          field.structName ===
+          props.configValue?.sunTableRelation?.subTableField
+      )
+    )?.id;
+
     querySunDataId({
       formId: props.btnInfo.modelId,
       subTableCompId: props.childTableProps.id,
-      dataId: props.record[props.childTableProps.primaryKey],
+      dataId: props.record[dataIdKey],
       type: 'detail',
+      btnId: props.btnInfo.id,
     }).then(res => {
       props.openFormModal({
         openType: 'modal',
